@@ -56,14 +56,13 @@ export default function Scroll({
                 digit >= randomizedColors.length
                   ? Math.abs(digit - randomizedColors.length)
                   : digit;
-              console.log(colorIdx);
               return (
                 <Box key={gifIdx}>
                   <Image
                     fallback={
                       <Box
                         bgColor={randomizedColors[colorIdx]}
-                        minWidth={"350px"}
+                        width={"350px"}
                         height={"350px"}
                       ></Box>
                     }
