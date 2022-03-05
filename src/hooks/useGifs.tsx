@@ -16,19 +16,28 @@ export default function useGifs(
     isLoadingNextPage: false,
   });
 
+  const abortController = new AbortController();
+  const fetchGifs = async (controller: AbortController) => {
+    const gifsResponse = await axios
+      .get<GifResponse>(
+        url.concat(`&limit=${limit}&offset=${state.page * limit}`),
+        { signal: controller.signal }
+      )
+      .then((res) => res.data)
+      .catch((err) => err);
+    return gifsResponse;
+  };
+
   useEffect(() => {
-    const abortController = new AbortController();
-    const init = async () => {
-      if (state.data === null) dispatch({ type: "LOADING" });
-      const gifsResponse = await getGifs(
-        url.concat(`&limit=${limit}&offset=${state.page * limit}`)
-      );
+    // fetches gifs on first render or when the user searches
+    const fetchOnFirstRender = async () => {
+      const gifsResponse = await fetchGifs(abortController);
       if (gifsResponse.data) {
         const { data: gifsList } = gifsResponse;
         return dispatch({
           type: "SUCCESS",
           payload: {
-            gifs: state.data ? state.data.concat(gifsList) : gifsList,
+            gifs: gifsList,
             page: state.page,
           },
         });
@@ -39,19 +48,38 @@ export default function useGifs(
         });
       }
     };
-    init();
 
+    fetchOnFirstRender();
     return function () {
       abortController.abort();
     };
-  }, [url, state.page]);
+  }, [url]);
+
+  useEffect(() => {
+    const fetchNextPage = async () => {
+      const gifsResponse = await fetchGifs(abortController);
+      if (gifsResponse.data && state.data) {
+        const { data: gifsList } = gifsResponse;
+        return dispatch({
+          type: "SUCCESS",
+          payload: {
+            gifs: state.data.concat(gifsList),
+            page: state.page,
+          },
+        });
+      } else {
+        return dispatch({
+          type: "ERROR",
+          payload: "Error while fetching next page",
+        });
+      }
+    };
+
+    if (state.data) fetchNextPage();
+    return function () {
+      abortController.abort();
+    };
+  }, [state.page]);
 
   return [state, dispatch];
 }
-
-const getGifs = async (url: string): Promise<GifResponse> => {
-  return axios
-    .get<GifResponse>(url)
-    .then((res) => res.data)
-    .catch((err) => err);
-};
