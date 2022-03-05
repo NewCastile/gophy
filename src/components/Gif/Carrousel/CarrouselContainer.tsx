@@ -10,7 +10,7 @@ export default function CarrouselContainer({
   section,
   subsection,
 }: CarrouselContainerProps) {
-  const [{ data, isLoading, error }] = useGifs(subsection.url, 20);
+  const [{ data, isLoading, error }] = useGifs(subsection.url, 10);
   if (isLoading) return <CarrouselSkeleton />;
   if (error) return <Box>Error while fetching data</Box>;
   if (!data) return null;
