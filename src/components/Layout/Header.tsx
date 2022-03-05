@@ -50,18 +50,23 @@ export default function Header() {
         <Input
           color={"gray.600"}
           bgColor={"whiteAlpha.900"}
-          _focus={{
-            border: "1px solid",
-            borderColor: "gray.500",
-          }}
           variant={"unstyled"}
           ref={inputRef}
           minWidth={"10ch"}
           maxWidth={"60ch"}
           width={"100%"}
           height={"3em"}
+          _focus={{
+            border: "1px solid",
+            borderColor: "gray.500",
+          }}
           paddingLeft={"2em"}
           placeholder="Let's find what u looking"
+          onKeyUp={(e) => {
+            if (e.code === "Enter" && inputRef.current) {
+              setSearch(inputRef.current.value);
+            }
+          }}
         />
 
         <Button
