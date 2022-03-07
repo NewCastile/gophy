@@ -31,6 +31,7 @@ export default function useGifs(
   useEffect(() => {
     // fetches gifs on first render or when the user searches
     const fetchOnFirstRender = async () => {
+      dispatch({ type: "LOADING" });
       const gifsResponse = await fetchGifs(abortController);
       if (gifsResponse.data) {
         const { data: gifsList } = gifsResponse;
