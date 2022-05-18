@@ -9,6 +9,6 @@ export default function Trendings() {
     url: `https://api.giphy.com/v1/gifs/trending?api_key=${API_KEY}`,
   };
   return (
-    <CarrouselContainer subsection={trendingsQueryObject}></CarrouselContainer>
+    <CarrouselContainer section="trending" subsection={trendingsQueryObject}></CarrouselContainer>
   );
 }

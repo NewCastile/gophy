@@ -13,11 +13,16 @@ export default function Scroll({
   section?: string;
   subsection: string;
 }) {
+
+  const url =
+    subsection === "trending"
+      ? `https://api.giphy.com/v1/gifs/trending?api_key=${API_KEY}`
+      : `https://api.giphy.com/v1/gifs/search?q=${subsection}&api_key=${API_KEY}`;
   const [
     { data: gifs, isLoading, error, page: currentPage, isLoadingNextPage },
     dispatch,
   ] = useGifs(
-    `https://api.giphy.com/v1/gifs/search?q=${subsection}&api_key=${API_KEY}`,
+    url,
     5
   );
   const randomizedColors = useRandomizedColors([]);
