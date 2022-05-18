@@ -11,7 +11,7 @@ export default function useButtonHandlers(
   const { distance, lastItemIndex } = carrouselState;
 
   const leftButtonOnClickHandler = () => {
-    const invertedWidths = invertArray(widths.slice(0, lastItemIndex + 1));
+    const invertedWidths = widths.slice(0, lastItemIndex + 1).reverse();
     const shownSectionMeasures: number[] = reduceMeasures(invertedWidths, 0);
 
     const widerThanWrapper = (width: number) => width > currWidth;
@@ -60,7 +60,6 @@ export default function useButtonHandlers(
         ? shownSectionMeasures[shownSectionMeasures.length - 1]
         : shownSectionMeasures[lastShownIdx - 1] - rest;
     const maxReachedBool = newIndex === limit || rest ? true : false;
-
     carrouselDispatcher({
       type: "MOVE_RIGHT",
       payload: {
@@ -76,13 +75,12 @@ export default function useButtonHandlers(
 
 const reduceMeasures = (arr: number[], initialIdx: number = 0) => {
   return arr.slice(initialIdx).map((measure, measureIdx, arr) => {
-    if (measureIdx === 0) return measure;
-    return arr.slice(0, measureIdx + 1).reduce((prev, curr) => prev + curr);
+    const firstMeasure = isNaN(measure) ? 0 : measure
+    if (measureIdx === 0) return firstMeasure;
+    return arr.slice(0, measureIdx + 1).reduce((prev, curr) => {
+      if(isNaN(prev)) return 0 + curr
+      if (isNaN(curr)) return 0 + prev
+      return prev +curr
+    });
   });
-};
-
-const invertArray = (arr: number[]) => {
-  const newArr: number[] = [];
-  arr.forEach((val) => newArr.push(val));
-  return newArr.reverse();
 };
